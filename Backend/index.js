@@ -14,9 +14,30 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
-  socket.emit("welcome", "hello welcome")
+  // Create a room
+  socket.on('create-room', (roomId) => {
+    socket.join(roomId);
+    io.to(roomId).emit('system-message', `Room created. Share this code: ${roomId}`);
+    console.log(`Room created: ${roomId} by ${socket.id}`);
+  });
 
-  socket.emit("player-joined", socket.id)
+  // Join a room
+  socket.on('join-room', (roomId, callback) => {
+    const room = io.sockets.adapter.rooms.get(roomId);
+    if (room) {
+      socket.join(roomId);
+      callback({ success: true });
+      io.to(roomId).emit('system-message', `User ${socket.id} joined the room.`);
+      console.log(`User ${socket.id} joined room ${roomId}`);
+    } else {
+      callback({ success: false, error: 'Room not found' });
+    }
+  });
+
+  // Chat message
+  socket.on('send-message', ({ roomId, message, sender }) => {
+    io.to(roomId).emit('receive-message', { message, sender, timestamp: Date.now() });
+  });
 
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
