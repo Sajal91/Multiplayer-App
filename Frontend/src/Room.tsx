@@ -10,10 +10,10 @@ interface Message {
 }
 
 const Room: React.FC = () => {
-  const { roomId } = useParams<{ roomId: string }>();
+  const { roomId, username } = useParams<{ roomId: string, username: string }>();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [username, setUsername] = useState('');
+  // const [username, setUsername] = useState('');
   const [joined, setJoined] = useState(false);
   const navigate = useNavigate();
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -21,7 +21,7 @@ const Room: React.FC = () => {
   useEffect(() => {
     if (!roomId) return;
     socket.connect();
-    socket.emit('join-room', roomId, (res: any) => {
+    socket.emit('join-room', roomId, username, (res: any) => {
       if (res.success) {
         setJoined(true);
         setMessages((msgs) => [...msgs, { sender: 'system', message: 'You joined the room.', timestamp: Date.now(), system: true }]);
@@ -54,7 +54,7 @@ const Room: React.FC = () => {
 
   const sendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || !username.trim()) return;
+    if (!input.trim() || !username?.trim()) return;
     socket.emit('send-message', { roomId, message: input, sender: username });
     setInput('');
   };
@@ -77,13 +77,13 @@ const Room: React.FC = () => {
           <div ref={messagesEndRef} />
         </div>
         <form onSubmit={sendMessage} className="flex gap-2 mt-2">
-          <input
+          {/* <input
             className="flex-1 border rounded px-2 py-1"
             placeholder="Your name"
             value={username}
             onChange={e => setUsername(e.target.value)}
             required
-          />
+          /> */}
           <input
             className="flex-1 border rounded px-2 py-1"
             placeholder="Type a message..."

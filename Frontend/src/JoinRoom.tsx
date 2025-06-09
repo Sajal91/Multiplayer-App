@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const JoinRoom: React.FC = () => {
-  const [roomId, setRoomId] = useState('');
+  const [roomId, setRoomId] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (roomId.trim()) {
-      navigate(`/room/${roomId.trim()}`);
+      navigate(`/room/${roomId.trim()}/${username}`);
     }
   };
 
@@ -21,6 +22,13 @@ const JoinRoom: React.FC = () => {
           placeholder="Enter Room Code"
           value={roomId}
           onChange={e => setRoomId(e.target.value)}
+          required
+        />
+        <input
+          className="border rounded px-3 py-2"
+          placeholder="Enter Username"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
           required
         />
         <button type="submit" className="bg-purple-500 text-white py-2 rounded hover:bg-purple-600 transition">Join Room</button>

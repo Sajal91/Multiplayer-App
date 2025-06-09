@@ -15,20 +15,20 @@ io.on('connection', (socket) => {
   console.log('A user connected:', socket.id);
 
   // Create a room
-  socket.on('create-room', (roomId) => {
+  socket.on('create-room', ({roomId, username}) => {
     socket.join(roomId);
     io.to(roomId).emit('system-message', `Room created. Share this code: ${roomId}`);
-    console.log(`Room created: ${roomId} by ${socket.id}`);
+    console.log(`Room created: ${roomId} by ${username}`);
   });
 
   // Join a room
-  socket.on('join-room', (roomId, callback) => {
+  socket.on('join-room', (roomId, username, callback) => {
     const room = io.sockets.adapter.rooms.get(roomId);
     if (room) {
       socket.join(roomId);
       callback({ success: true });
-      io.to(roomId).emit('system-message', `User ${socket.id} joined the room.`);
-      console.log(`User ${socket.id} joined room ${roomId}`);
+      io.to(roomId).emit('system-message', `${username} joined the room.`);
+      console.log(`${username} joined room ${roomId}`);
     } else {
       callback({ success: false, error: 'Room not found' });
     }
