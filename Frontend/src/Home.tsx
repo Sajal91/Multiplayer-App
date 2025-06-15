@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { socket } from './assets/socket';
-import { v4 as uuidv4 } from 'uuid';
+import { socket } from './utils/socket';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -15,7 +14,7 @@ const Home: React.FC = () => {
   const handleConfirmBtn = (e: any) => {
     e.preventDefault();
     socket.connect();
-    const roomId = uuidv4();
+    const roomId = Math.floor((Math.random() * 100000) + Math.random() * 10).toString();
     socket.emit('create-room', { roomId, username });
     navigate(`/room/${roomId}/${username}`);
   }
@@ -26,7 +25,7 @@ const Home: React.FC = () => {
       {!isCreateRoomBtnClicked ? <div className="flex gap-8">
         <button
           onClick={handleCreateRoom}
-          className="block p-8 rounded-xl shadow-lg bg-white hover:bg-blue-100 transition-all border-2 border-blue-300 hover:border-blue-500 text-center w-64"
+          className="block p-8 rounded-xl shadow-lg bg-white hover:bg-blue-100 transition-all border-2 border-blue-300 hover:border-blue-500 text-center w-64 cursor-pointer"
         >
           <h2 className="text-2xl font-semibold mb-2 text-blue-700">Create a Room</h2>
           <p className="text-gray-600">Start a new game and invite your friends.</p>
@@ -46,7 +45,7 @@ const Home: React.FC = () => {
             value={username}
             required
           />
-          <button type='submit' className='px-2 bg-purple-500 text-white py-2 rounded hover:bg-purple-600 transition'>Confirm</button>
+          <button type='submit' className='px-2 bg-purple-500 text-white py-2 rounded hover:bg-purple-600 transition cursor-pointer'>Confirm</button>
         </form>
       }
     </div>

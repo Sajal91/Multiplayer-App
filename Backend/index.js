@@ -39,6 +39,10 @@ io.on('connection', (socket) => {
     io.to(roomId).emit('receive-message', { message, sender, timestamp: Date.now() });
   });
 
+  socket.on('send-audio', ({ roomId, audioBlob, sender }) => {
+    io.to(roomId).emit('receive-audio', { audioBlob, sender: sender, timestamp: Date.now() });
+  });
+
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
   });
